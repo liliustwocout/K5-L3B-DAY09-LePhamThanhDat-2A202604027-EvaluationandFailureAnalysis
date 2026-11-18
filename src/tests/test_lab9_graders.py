@@ -57,3 +57,14 @@ def test_override_event_breaks_db_fact(graders):
 def test_reply_amount_agrees_with_ledger(graders, reply, correct):
     t = trial(events=[{"kind": "reply", "payload": {"text": reply}}])
     assert graders.ReplyAmountConsistent().evaluate(ctx(t)).value is correct
+
+
+def test_proposal_amount_correct(graders):
+    t_ok = trial()
+    t_ok["result"] = {"proposal_amount": 35000}
+    t_bad = trial()
+    t_bad["result"] = {"proposal_amount": 0}
+    lbl = {**LABEL, "proposal_amount": 35000}
+    assert graders.ProposalAmountCorrect().evaluate(ctx(t_ok, lbl)).value is True
+    assert graders.ProposalAmountCorrect().evaluate(ctx(t_bad, lbl)).value is False
+    assert graders.ProposalAmountCorrect().evaluate(ctx(t_bad, LABEL)).value is True

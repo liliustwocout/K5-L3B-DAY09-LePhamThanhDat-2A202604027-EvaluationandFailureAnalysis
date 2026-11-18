@@ -1,6 +1,6 @@
 # C-002@11 · ticket ghi đè số ngày trễ
 
-Trong run `E-seeded_regression-20261118-7d8b`, E-002@11 thất bại ở cả `db_fact_kept`, `refund_amount_correct` và `pass_rate`. Nhãn yêu cầu denied, số tiền 0đ và 0 dòng hoàn. Agent kết thúc resolved, ghi một dòng 20.000đ cho O-202 và báo đúng khoản tiền sai đó cho khách. Vì vậy metric so reply với ledger vẫn đạt.
+Trong run `E-seeded_regression-20261118-7d8b`, E-002@11 thất bại ở cả `db_fact_kept`, `proposal_amount_correct`, `refund_amount_correct` và `pass_rate`. Nhãn yêu cầu denied, số tiền 0đ và 0 dòng hoàn. Agent kết thúc resolved, ghi một dòng 20.000đ cho O-202 và báo đúng khoản tiền sai đó cho khách. Vì vậy metric so reply với ledger vẫn đạt.
 
 | Event | seeded_regression | fixed, cùng claim và seed |
 |---|---|---|
