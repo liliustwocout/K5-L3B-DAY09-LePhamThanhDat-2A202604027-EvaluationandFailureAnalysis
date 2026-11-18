@@ -38,19 +38,38 @@ def sha12(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()[:12]
 
 
+PUBLIC_TRACE_CASES = {
+    "C-001": ("round_down", ["FM-01", "FM-04", "FM-07"]),
+    "C-002": ("ticket_trust", ["FM-01", "FM-03"]),
+    "C-003": ("leaky_trace", ["FM-01"]),
+    "C-004": ("leaky_trace", ["FM-01"]),
+    "C-005": ("leaky_trace", ["FM-01"]),
+    "C-006": ("stale_clause", ["FM-01", "FM-06"]),
+    "C-007": ("ignore_denied", ["FM-01", "FM-02", "FM-04"]),
+    "C-008": ("misreport", ["FM-01", "FM-04", "FM-08"]),
+    "C-009": ("leaky_trace", ["FM-01"]),
+    "C-010": ("sibling_refund", ["FM-01", "FM-04", "FM-07"]),
+    "C-011": ("sibling_refund", ["FM-01", "FM-04", "FM-07"]),
+    "C-012": ("sibling_refund", ["FM-01", "FM-04", "FM-07"]),
+    "C-013": ("pre_deducted", ["FM-01", "FM-02", "FM-04", "FM-05"]),
+    "C-014": ("sum_parts", ["FM-01", "FM-04", "FM-05", "FM-08"]),
+}
+
+
 def build(source: Path = SOURCE) -> tuple[int, int]:
     claims = load_jsonl(source)
     items, labels = [], {}
     for n, claim in enumerate(claims, start=1):
         item_id = f"E-{n:03d}"
+        bug, modes = PUBLIC_TRACE_CASES.get(claim["claim_id"], (None, []))
         items.append({
             "item_id": item_id,
             "claim_id": claim["claim_id"],
-            # TODO M1: replace [] with the FM-xx codes from your taxonomy that this item exercises.
-            "failure_modes": [],
+            "failure_modes": modes,
             "provenance": {"source": "lab8_public", "matrix_id": claim.get("matrix_id"),
-                           "from_trace": None, "generator": None,
-                           "label_by": "lab8_matrix", "checked_by": None},
+                           "from_trace": f"{bug}/{claim['claim_id']}@11" if bug else None,
+                           "generator": "lab9.evalset.build",
+                           "label_by": "lab8_matrix", "checked_by": "Codex (paired trace review)" if bug else None},
             "split": "regression",
             "eval_set_version": VERSION,
         })

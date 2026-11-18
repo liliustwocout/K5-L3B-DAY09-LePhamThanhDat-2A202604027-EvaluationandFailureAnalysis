@@ -48,3 +48,12 @@ def test_wrong_amount_in_ledger(graders):
 
 def test_override_event_breaks_db_fact(graders):
     assert graders.DbFactKept().evaluate(ctx(trial(events=[{"kind": "model_override", "payload": {}}]))).value is False
+
+@pytest.mark.parametrize("reply,correct", [
+    ("LogiX đã hoàn phí 35.000đ cho đơn O-107.", True),
+    ("LogiX đã hoàn 150.000đ cho đơn O-107.", False),
+    ("Đơn O-107 đang được kiểm tra.", True),
+])
+def test_reply_amount_agrees_with_ledger(graders, reply, correct):
+    t = trial(events=[{"kind": "reply", "payload": {"text": reply}}])
+    assert graders.ReplyAmountConsistent().evaluate(ctx(t)).value is correct

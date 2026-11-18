@@ -14,26 +14,43 @@ POS = "FAIL"   # the judge's job is to FIND failures, so FAIL is the positive cl
 
 def confusion(human: Sequence[str], judge: Sequence[str]) -> dict[str, int]:
     """tp/fp/fn/tn with FAIL as positive."""
-    # TODO M2
-    raise NotImplementedError
+    counts = dict(tp=0, fp=0, fn=0, tn=0)
+    for actual, predicted in zip(human, judge, strict=True):
+        if actual not in ("PASS", POS) or predicted not in ("PASS", POS):
+            raise ValueError("Expected PASS or FAIL")
+        if predicted == POS:
+            counts["tp" if actual == POS else "fp"] += 1
+        else:
+            counts["fn" if actual == POS else "tn"] += 1
+    return counts
 
 
 def precision_recall(human: Sequence[str], judge: Sequence[str]) -> tuple[float, float]:
-    # TODO M2: precision = tp/(tp+fp), recall = tp/(tp+fn); return 0.0 when the denominator is 0
-    raise NotImplementedError
+    counts = confusion(human, judge)
+    hits = counts["tp"]
+    flagged = hits + counts["fp"]
+    failures = hits + counts["fn"]
+    return (hits / flagged if flagged else 0.0, hits / failures if failures else 0.0)
 
 
 def cohen_kappa(human: Sequence[str], judge: Sequence[str]) -> float:
-    """kappa = (p_o - p_e) / (1 - p_e). Raise ValueError when undefined (p_e == 1):
-    a constant judge has no signal and must FAIL calibration, not pass on a technicality."""
-    # TODO M2
-    raise NotImplementedError
+    counts = confusion(human, judge)
+    n = len(human)
+    failures = counts["tp"] + counts["fn"]
+    flagged = counts["tp"] + counts["fp"]
+    chance = failures * flagged + (n - failures) * (n - flagged)
+    denominator = n * n - chance
+    if not denominator:
+        raise ValueError("Kappa undefined for empty or identical constant labels")
+    return (n * (counts["tp"] + counts["tn"]) - chance) / denominator
 
 
 def rogan_gladen(observed_rate: float, sensitivity: float, specificity: float) -> float:
-    """Correct an observed failure rate for judge error; clip to [0, 1]."""
-    # TODO M2: (p_obs + spec - 1) / (sens + spec - 1)
-    raise NotImplementedError
+    """Correct the observed failure rate and clip to the probability range."""
+    denominator = sensitivity + specificity - 1
+    if denominator == 0:
+        return float("nan")
+    return min(1.0, max(0.0, (observed_rate + specificity - 1) / denominator))
 
 
 def paired_bootstrap(a: Sequence[float], b: Sequence[float], *, n_resamples: int = 1000,
@@ -41,8 +58,23 @@ def paired_bootstrap(a: Sequence[float], b: Sequence[float], *, n_resamples: int
     """a[i], b[i] = per-item mean over seeds, SAME items, SAME order.
     Return (mean(a)-mean(b), lo, hi) with scipy.stats.bootstrap(paired=True, method="percentile",
     rng=numpy.random.default_rng(rng)). If a == b everywhere return (0.0, 0.0, 0.0)."""
-    # TODO M4
-    raise NotImplementedError
+    import numpy as np
+    from scipy.stats import bootstrap
+
+    left, right = np.asarray(a, dtype=float), np.asarray(b, dtype=float)
+    if left.ndim != 1 or left.shape != right.shape or not left.size:
+        raise ValueError("Expected two nonempty, aligned sequences")
+    delta = float(np.mean(left - right))
+    if left.size == 1 or np.array_equal(left, right):
+        return delta, delta, delta
+
+    def difference(x, y, axis):
+        return np.mean(x - y, axis=axis)
+
+    interval = bootstrap((left, right), difference, paired=True, method="percentile",
+                         n_resamples=n_resamples, confidence_level=confidence,
+                         rng=np.random.default_rng(rng)).confidence_interval
+    return delta, float(interval.low), float(interval.high)
 
 
 def pass_at_k(n: int, c: int, k: int) -> float:
