@@ -16,6 +16,6 @@ Mỗi bộ có 100 phản hồi. Lớp dương là FAIL theo người chấm. Đ
 | H-029 · tone | PASS / FAIL | Đồng ý với người chấm. “Không cần nhắn thêm” có ý ngăn khách liên hệ tiếp. Bổ sung ví dụ phân biệt lời đề nghị chờ với mệnh lệnh kết thúc trao đổi. |
 | H-042 · tone | FAIL / PASS | Đồng ý với người chấm. Câu ngắn nhưng vẫn lịch sự, có “Dạ” và “ạ”. Thêm mẫu thông báo giao dịch ngắn được chấp nhận. |
 | H-051 · tone | FAIL / PASS | Đồng ý với người chấm về giọng điệu. “Refund” là từ vay mượn trong một câu lịch sự. Chấm độ dễ hiểu của thuật ngữ ở tiêu chí riêng. |
-| HL-028 · helpful | PASS / FAIL | Đồng ý với người chấm. Lời xin lỗi và cảm ơn thể hiện sự đồng cảm nhưng khách vẫn cần biết cách xử lý vấn đề. Yêu cầu judge chỉ ra kết quả cụ thể hoặc bước tiếp theo trước khi cho PASS. |
+| HL-028 · helpful | PASS / FAIL | Đồng ý với người chấm. Phản hồi xin lỗi lịch sự và nêu đã hoàn 50.000đ cho đơn O-677, nhưng ledger ghi 35.000đ (sai tiền). Judge chỉ đọc văn bản nên không phát hiện được sai lệch với dữ liệu hệ thống; chuyển kiểm tra số tiền sang code grader (`ReplyAmountConsistent`) thay vì giữ trong judge. |
 
-Hiệu chỉnh tỷ lệ FAIL chỉ ước lượng tỷ lệ lỗi của cả tập. Nó không tìm lại 21 ca mà helpful bỏ sót. Các chỉ số trên dùng nhãn replay công khai. Sau khi sửa rubric, cần đánh giá trên một tập có nhãn người độc lập trước khi đưa helpful trở lại gate.
+Hiệu chỉnh tỷ lệ FAIL chỉ ước lượng tỷ lệ lỗi của cả tập. Nó không tìm lại 21 ca mà helpful bỏ sót (18 ca sai tiền và 3 ca sai xưng hô). Sau khi tách phần kiểm tra số tiền sang code và sửa rubric cho tiêu chí hỗ trợ, cần đánh giá trên một tập có nhãn người độc lập trước khi đưa helpful trở lại gate. Các chỉ số trên dùng nhãn replay công khai.

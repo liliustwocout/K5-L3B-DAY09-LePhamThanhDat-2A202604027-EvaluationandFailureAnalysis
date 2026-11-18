@@ -1,6 +1,6 @@
 # Eval card · LogiX-VN
 
-Bản đề xuất fixed vượt gate trên 14 claim công khai × 5 seed (11, 22, 33, 44, 55). Baseline và cách tính gate ở commit 78b0bcf, grader 817e9ba, spec 1.0, eval set v1 SHA 7d8b0bd39217. Nhãn lấy từ labels_v1.json của ma trận Lab 8. Các cột bên dưới lần lượt thuộc run E-swarm-20261118-7d8b, E-fixed-20261118-7d8b và E-seeded_regression-20261118-7d8b.
+Bản đề xuất fixed vượt gate trên 14 claim công khai × 5 seed (11, 22, 33, 44, 55). Chạy bằng `lab9.eval` theo spec 1.0 và eval set v1 SHA 7d8b0bd39217. Nhãn lấy từ labels_v1.json của ma trận Lab 8. Các cột bên dưới lần lượt thuộc run E-swarm-20261118-7d8b, E-fixed-20261118-7d8b và E-seeded_regression-20261118-7d8b.
 
 | Metric | Ngưỡng | swarm | fixed | seeded_regression |
 |---|---|---:|---:|---:|
@@ -10,6 +10,7 @@ Bản đề xuất fixed vượt gate trên 14 claim công khai × 5 seed (11, 2
 | pass_rate | ≥0,85 và CI không nằm dưới 0 | 0,9857 | 1 | 0,7143 |
 | reply_amount_consistent | 1 | 1 | 1 | 0,7857 |
 | db_fact_kept | cảnh báo dưới 0,95 | 0,9857 | 1 | 0,9286 |
+| proposal_amount_correct | cảnh báo dưới 0,95 | 0,9857 | 1 | 0,7857 |
 | pass_5 | cảnh báo dưới 0,80 | 0,9286 | 1 | 0,7143 |
 | cost_per_success | cảnh báo nếu tăng trên 10% | 49,567 | 48,7157 | 81,202 |
 

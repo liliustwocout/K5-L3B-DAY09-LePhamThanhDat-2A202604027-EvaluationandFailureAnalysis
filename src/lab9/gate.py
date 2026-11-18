@@ -48,7 +48,7 @@ def integrity_check(pr: dict, base: dict, spec: dict, base_spec: dict | None = N
         problems.append("incomplete, duplicate or different item/seed pairs")
     if pr.get("evaluator_failures"):
         problems.append("evaluator failures reported")
-    if any(not isinstance(v, (int, float)) or not math.isfinite(v) for v in pr["metrics"].values()):
+    if any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) for v in pr["metrics"].values()):
         problems.append("missing or non-finite aggregate")
     graded = [m["id"] for m in spec["metrics"] if m["id"] in GRADERS]
     for row in rows:
